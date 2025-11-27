@@ -8,6 +8,9 @@ import fileio.InputLoader;
 import java.io.File;
 import java.io.IOException;
 
+import mission.World;
+import mission.commandCenter.CommandHandler;
+
 /**
  * The entry point to this homework. It runs the checker that tests your implementation.
  */
@@ -30,23 +33,9 @@ public final class Main {
         InputLoader inputLoader = new InputLoader(inputPath);
         ArrayNode output = MAPPER.createArrayNode();
 
-        /*
-         * TODO Implement your function here
-         *
-         * How to add output to the output array?
-         * There are multiple ways to do this, here is one example:
-         *
-         *
-         * ObjectNode objectNode = MAPPER.createObjectNode();
-         * objectNode.put("field_name", "field_value");
-         *
-         * ArrayNode arrayNode = MAPPER.createArrayNode();
-         * arrayNode.add(objectNode);
-         *
-         * output.add(arrayNode);
-         * output.add(objectNode);
-         *
-         */
+        World myWorld = new World(inputLoader.getSimulations(), MAPPER, output);
+        CommandHandler commandHandler = new CommandHandler(myWorld, inputLoader.getCommands());
+        commandHandler.executeCommands();
 
         File outputFile = new File(outputPath);
         outputFile.getParentFile().mkdirs();
