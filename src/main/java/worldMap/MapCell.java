@@ -40,46 +40,22 @@ public class MapCell {
     }
 
     public void setPlant(PlantInput plant) {
-        this.plant = new Plant(plant.getName(), plant.getMass(), plant.getType());
+        this.plant = new Plant(plant);
     }
 
     public void setAnimal(AnimalInput animal) {
-        this.animal = new Animal(animal.getName(), animal.getMass(), animal.getType());
+        this.animal = new Animal(animal);
     }
 
     public void setWater(WaterInput water) {
-        this.water = new Water(water.getName(), water.getMass(), water.getType(),
-                water.getSalinity(), water.getPH(), water.getPurity(),
-                water.getTurbidity(), water.getContaminantIndex(), water.isFrozen());
+        this.water = new Water(water);
     }
 
     public void setSoil(SoilInput soil) {
-        double specificTrait;
-        switch (soil.getType()) {
-            case "ForestSoil" -> specificTrait = soil.getLeafLitter();
-            case "SwampSoil" -> specificTrait = soil.getWaterLogging();
-            case "DesertSoil" -> specificTrait = soil.getSalinity();
-            case "GrasslandSoil" -> specificTrait = soil.getRootDensity();
-            case "TundraSoil" -> specificTrait = soil.getPermafrostDepth();
-            default -> throw new IllegalArgumentException();
-        }
-        this.soil = Soil.createSoil(soil.getName(), soil.getMass(), soil.getType(),
-                soil.getNitrogen(), soil.getWaterRetention(), soil.getSoilpH(),
-                soil.getOrganicMatter(), specificTrait);
+        this.soil = Soil.createSoil(soil);
     }
 
     public void setAir(AirInput air) {
-        double specificTrait;
-        switch (air.getType()) {
-            case "TropicalAir" -> specificTrait = air.getCo2Level();
-            case "PolarAir" -> specificTrait = air.getIceCrystalConcentration();
-            case "TemperateAir" -> specificTrait = air.getPollenLevel();
-            case "DesertAir" -> specificTrait = air.getDustParticles();
-            case "MountainAir" -> specificTrait = air.getAltitude();
-            default -> throw new IllegalArgumentException();
-        }
-        this.air = Air.createAir(air.getName(), air.getMass(), air.getType(),
-                air.getHumidity(), air.getTemperature(), air.getOxygenLevel(),
-                specificTrait);
+        this.air = Air.createAir(air);
     }
 }

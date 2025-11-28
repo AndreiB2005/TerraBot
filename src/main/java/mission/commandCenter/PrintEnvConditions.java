@@ -3,34 +3,30 @@ package mission.commandCenter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import mission.TerraBot;
+import mission.World;
 import worldMap.MapCell;
+import entities.Air;
 
 public class PrintEnvConditions implements Command {
-    private final String commandName = "printEnvConditions";
-    private final int timestamp;
     private final ObjectMapper mapper;
     private final MapCell cell;
+    private final TerraBot robot;
     private final boolean simulationStarted;
 
-    public PrintEnvConditions(int timestamp, ObjectMapper mapper, MapCell cell,
-            boolean simulationStarted) {
-        this.timestamp = timestamp;
-        this.mapper = mapper;
+    public PrintEnvConditions(World world, MapCell cell) {
+        mapper = world.getMapper();
         this.cell = cell;
-        this.simulationStarted = simulationStarted;
+        robot = world.getMyRobot();
+        simulationStarted = world.getSimulationStarted();
     }
 
-    public String getCommandName() {
-        return commandName;
-    }
-
-    public int getTimestamp() {
-        return timestamp;
-    }
-
-    public void execute(ObjectNode objNode) throws NotStartedException {
+    public void execute(ObjectNode objNode) throws
+            NotStartedException, StillChargingException {
         if (!simulationStarted)
             throw new NotStartedException();
+        if (robot.getRechargeTime() > 0)
+            throw new StillChargingException();
         ObjectNode output = mapper.createObjectNode();
         ObjectNode plantNode;
         ObjectNode animalNode;

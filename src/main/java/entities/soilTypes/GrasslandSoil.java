@@ -2,16 +2,16 @@ package entities.soilTypes;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import fileio.SoilInput;
+
 import entities.Soil;
 
 public class GrasslandSoil extends Soil {
     private final double rootDensity;
 
-    public GrasslandSoil(String name, double mass, String type, double nitrogen,
-                         double waterRetention, double soilpH, double organicMatter,
-                         double rootDensity) {
-        super(name, mass, type, nitrogen, waterRetention, soilpH, organicMatter);
-        this.rootDensity = rootDensity;
+    public GrasslandSoil(SoilInput soilInput) {
+        super(soilInput);
+        rootDensity = soilInput.getRootDensity();
     }
 
     public double getSoilQuality() {
@@ -22,7 +22,7 @@ public class GrasslandSoil extends Soil {
     }
 
     public double getTrap() {
-        return ((50 - rootDensity) + this.getWaterRetention() * 0.5) / 75 * 100;
+        return ((50 - rootDensity) + this.getWaterRetention() * 0.5) / 75d * 100;
     }
 
     public double getRootDensity() {

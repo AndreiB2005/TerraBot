@@ -1,5 +1,7 @@
 package entities;
 
+import fileio.WaterInput;
+
 public class Water extends Entity {
     private final String type;
     private final double salinity;
@@ -9,17 +11,15 @@ public class Water extends Entity {
     private final double contaminantIndex;
     private final boolean isFrozen;
 
-    public Water(String name, double mass, String type, double salinity,
-                 double pH, double purity, double turbidity,
-                 double contaminantIndex, boolean isFrozen) {
-        super(name, mass);
-        this.type = type;
-        this.salinity = salinity;
-        this.pH = pH;
-        this.purity = purity;
-        this.turbidity = turbidity;
-        this.contaminantIndex = contaminantIndex;
-        this.isFrozen = isFrozen;
+    public Water(WaterInput waterInput) {
+        super(waterInput.getName(), waterInput.getMass());
+        type = waterInput.getType();
+        salinity = waterInput.getSalinity();
+        pH = waterInput.getPH();
+        purity = waterInput.getPurity();
+        turbidity = waterInput.getTurbidity();
+        contaminantIndex = waterInput.getContaminantIndex();
+        isFrozen = waterInput.isFrozen();
     }
 
     public String getType() {
@@ -40,5 +40,4 @@ public class Water extends Entity {
                 0.15 * contaminantScore +
                 0.2 * frozenScore) * 100;
     }
-
 }

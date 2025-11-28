@@ -3,6 +3,8 @@ package entities;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import fileio.SoilInput;
+
 import entities.soilTypes.ForestSoil;
 import entities.soilTypes.SwampSoil;
 import entities.soilTypes.DesertSoil;
@@ -24,14 +26,13 @@ public abstract class Soil extends Entity {
         TundraSoil;
     }
 
-    public Soil(String name, double mass, String type, double nitrogen,
-                double waterRetention, double soilpH, double organicMatter) {
-        super(name, mass);
-        this.type = SoilType.valueOf(type);
-        this.nitrogen = nitrogen;
-        this.waterRetention = waterRetention;
-        this.soilpH = soilpH;
-        this.organicMatter = organicMatter;
+    public Soil(SoilInput soilInput) {
+        super(soilInput.getName(), soilInput.getMass());
+        type = SoilType.valueOf(soilInput.getType());
+        nitrogen = soilInput.getNitrogen();
+        waterRetention = soilInput.getWaterRetention();
+        soilpH = soilInput.getSoilpH();
+        organicMatter = soilInput.getOrganicMatter();
     }
 
     public String getType() {
@@ -62,20 +63,13 @@ public abstract class Soil extends Entity {
         return (Math.round(score * 100) / 100d);
     }
 
-    public static Soil createSoil(String name, double mass, String type, double nitrogen,
-                           double waterRetention, double soilpH, double organicMatter,
-                           double specificTrait) {
-        return switch (type) {
-            case "ForestSoil" -> new ForestSoil(name, mass, type, nitrogen, waterRetention,
-                    soilpH, organicMatter, specificTrait);
-            case "SwampSoil" -> new SwampSoil(name, mass, type, nitrogen, waterRetention,
-                    soilpH, organicMatter, specificTrait);
-            case "DesertSoil" -> new DesertSoil(name, mass, type, nitrogen, waterRetention,
-                    soilpH, organicMatter, specificTrait);
-            case "GrasslandSoil" -> new GrasslandSoil(name, mass, type, nitrogen, waterRetention,
-                    soilpH, organicMatter, specificTrait);
-            case "TundraSoil" -> new TundraSoil(name, mass, type, nitrogen, waterRetention,
-                    soilpH, organicMatter, specificTrait);
+    public static Soil createSoil(SoilInput soilInput) {
+        return switch (soilInput.getType()) {
+            case "ForestSoil" -> new ForestSoil(soilInput);
+            case "SwampSoil" -> new SwampSoil(soilInput);
+            case "DesertSoil" -> new DesertSoil(soilInput);
+            case "GrasslandSoil" -> new GrasslandSoil(soilInput);
+            case "TundraSoil" -> new TundraSoil(soilInput);
             default -> throw new IllegalArgumentException();
         };
     }
@@ -85,13 +79,13 @@ public abstract class Soil extends Entity {
     public abstract double getSoilQuality();
 
     public ObjectNode printSoil(ObjectMapper mapper) {
-        ObjectNode soilNode = this.printEntity(mapper);
-        soilNode.put("nitrogen", this.getNitrogen());
-        soilNode.put("waterRetention", this.getWaterRetention());
-        soilNode.put("soilpH", this.getSoilpH());
-        soilNode.put("organicMatter", this.getOrganicMatter());
-        soilNode.put("soilQuality", this.getSoilQuality());
-        this.addSpecificTrait(soilNode);
+        ObjectNode soilNode = printEntity(mapper);
+        soilNode.put("nitrogen", getNitrogen());
+        soilNode.put("waterRetention", getWaterRetention());
+        soilNode.put("soilpH", getSoilpH());
+        soilNode.put("organicMatter", getOrganicMatter());
+        soilNode.put("soilQuality", getSoilQuality());
+        addSpecificTrait(soilNode);
         return soilNode;
     }
 

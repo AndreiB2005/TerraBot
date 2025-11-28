@@ -2,16 +2,16 @@ package entities.soilTypes;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import fileio.SoilInput;
+
 import entities.Soil;
 
 public class SwampSoil extends Soil {
     private final double waterLogging;
 
-    public SwampSoil(String name, double mass, String type, double nitrogen,
-                     double waterRetention, double soilpH, double organicMatter,
-                     double waterLogging) {
-        super(name, mass, type, nitrogen, waterRetention, soilpH, organicMatter);
-        this.waterLogging = waterLogging;
+    public SwampSoil(SoilInput soilInput) {
+        super(soilInput);
+        waterLogging = soilInput.getWaterLogging();
     }
 
     public double getSoilQuality() {

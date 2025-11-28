@@ -1,16 +1,18 @@
 package entities;
 
+import fileio.PlantInput;
+
 public class Plant extends Entity {
     private final PlantType type;
     private Maturity age = Maturity.Young;
     private double growthLevel = 0d;
 
     private enum PlantType {
-        FloweringPlants(6d, 0.9),
-        GymnospermsPlants(0d, 0.6),
-        Ferns(0d, 0.3),
-        Mosses(0.8, 0.4),
-        Algae(0.5, 0.2);
+        FloweringPlants(6d, 90),
+        GymnospermsPlants(0d, 60),
+        Ferns(0d, 30),
+        Mosses(0.8, 40),
+        Algae(0.5, 20);
 
         private final double oxygenPlant;
         private final double stuckProbability;
@@ -53,9 +55,9 @@ public class Plant extends Entity {
         }
     }
 
-    public Plant(String name, double mass, String type) {
-        super(name, mass);
-        this.type = PlantType.valueOf(type);
+    public Plant(PlantInput plantInput) {
+        super(plantInput.getName(), plantInput.getMass());
+        type = PlantType.valueOf(plantInput.getType());
     }
 
     public String getType() {
@@ -75,7 +77,7 @@ public class Plant extends Entity {
     }
 
     public double getStuck() {
-        return type.getStuckProbability() / 100;
+        return type.getStuckProbability() / 100d;
     }
 
     public boolean isDead() {

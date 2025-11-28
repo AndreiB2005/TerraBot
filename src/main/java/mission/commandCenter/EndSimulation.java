@@ -5,12 +5,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import mission.World;
 
 public class EndSimulation implements Command {
-    private final String commandName = "endSimulation";
-    private final int timestamp;
     private final World myWorld;
 
-    public EndSimulation(int timestamp, World myWorld) {
-        this.timestamp = timestamp;
+    public EndSimulation(World myWorld) {
         this.myWorld = myWorld;
     }
 

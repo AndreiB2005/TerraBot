@@ -2,16 +2,16 @@ package entities.soilTypes;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import fileio.SoilInput;
+
 import entities.Soil;
 
 public class ForestSoil extends Soil {
     private final double leafLitter;
 
-    public ForestSoil(String name, double mass, String type, double nitrogen,
-                      double waterRetention, double soilpH, double organicMatter,
-                      double leafLitter) {
-        super(name, mass, type, nitrogen, waterRetention, soilpH, organicMatter);
-        this.leafLitter = leafLitter;
+    public ForestSoil(SoilInput soilInput) {
+        super(soilInput);
+        leafLitter = soilInput.getLeafLitter();
     }
 
     public double getSoilQuality() {
@@ -23,7 +23,7 @@ public class ForestSoil extends Soil {
     }
 
     public double getTrap() {
-        return ((this.getWaterRetention() * 0.6) + (leafLitter * 0.4)) / 80 * 100;
+        return ((this.getWaterRetention() * 0.6) + (leafLitter * 0.4)) / 80d * 100d;
     }
 
     public double getLeafLitter() {

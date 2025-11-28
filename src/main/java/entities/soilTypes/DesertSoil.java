@@ -2,16 +2,16 @@ package entities.soilTypes;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import fileio.SoilInput;
+
 import entities.Soil;
 
 public class DesertSoil extends Soil {
     private final double salinity;
 
-    public DesertSoil(String name, double mass, String type, double nitrogen,
-                      double waterRetention, double soilpH, double organicMatter,
-                      double salinity) {
-        super(name, mass, type, nitrogen, waterRetention, soilpH, organicMatter);
-        this.salinity = salinity;
+    public DesertSoil(SoilInput soilInput) {
+        super(soilInput);
+        salinity = soilInput.getSalinity();
     }
 
     public double getSoilQuality() {
@@ -22,7 +22,7 @@ public class DesertSoil extends Soil {
     }
 
     public double getTrap() {
-        return (100 - this.getWaterRetention() + salinity) / 100 * 100;
+        return (100 - this.getWaterRetention() + salinity) / 100d * 100;
     }
 
     public double getSalinity() {

@@ -32,4 +32,8 @@ public class MapMatrix {
     public MapCell getCell(int x, int y)  {
         return matrix[x][y];
     }
+
+    public boolean isInsideMap(int posX, int posY) {
+        return posX >= 0 && posX < cols && posY >= 0 && posY < rows;
+    }
 }

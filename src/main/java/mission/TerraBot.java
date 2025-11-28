@@ -6,14 +6,14 @@ import entities.Entity;
 
 public class TerraBot {
     private int battery;
-    private int recharged;
+    private int rechargeTime;
     private final List<Entity> inventory;
     private int posX;
     private int posY;
 
     public TerraBot(int energyPoints) {
         battery = energyPoints;
-        recharged = 0;
+        rechargeTime = 0;
         inventory = new ArrayList<>();
         posX = 0;
         posY = 0;
@@ -24,7 +24,7 @@ public class TerraBot {
     }
 
     public int getRechargeTime() {
-        return recharged;
+        return rechargeTime;
     }
 
     public List<Entity> getInventory() {
@@ -41,6 +41,10 @@ public class TerraBot {
 
     public void setBattery(int battery) {
         this.battery = battery;
+    }
+
+    public void setRechargeTime(int rechargeTime) {
+        this.rechargeTime = Math.max(0, rechargeTime);
     }
 
     public void changeCoordinates(int posX, int posY) {

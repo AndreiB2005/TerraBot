@@ -5,12 +5,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import mission.World;
 
 public class StartSimulation implements Command {
-    private final String commandName = "startSimulation";
-    private final int timestamp;
     private final World myWorld;
 
-    public StartSimulation(int timestamp, World myWorld) {
-        this.timestamp = timestamp;
+    public StartSimulation(World myWorld) {
         this.myWorld = myWorld;
     }
 
@@ -23,7 +20,7 @@ public class StartSimulation implements Command {
             myWorld.buildSimulation();
             message = "Simulation has started.";
         } catch (AlreadyStartedException e) {
-            message = e.getErrorMessage();
+            message = e.getMessage();
         }
         objNode.put("message", message);
     }

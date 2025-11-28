@@ -3,6 +3,9 @@ package entities;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import fileio.AirInput;
+import fileio.CommandInput;
+
 import entities.airTypes.TropicalAir;
 import entities.airTypes.PolarAir;
 import entities.airTypes.TemperateAir;
@@ -14,6 +17,8 @@ public abstract class Air extends Entity {
     private double humidity;
     private final double temperature;
     private double oxygenLevel;
+    public double currQuality;
+    private int weatherTimestamp = 0;
 
     private enum AirType {
         TropicalAir(82),
@@ -33,13 +38,12 @@ public abstract class Air extends Entity {
         }
     }
 
-    public Air(String name, double mass, String type, double humidity,
-               double temperature, double oxygenLevel) {
-        super(name, mass);
-        this.type = AirType.valueOf(type);
-        this.humidity = humidity;
-        this.temperature = temperature;
-        this.oxygenLevel = oxygenLevel;
+    public Air(AirInput airInput) {
+        super(airInput.getName(), airInput.getMass());
+        type = AirType.valueOf(airInput.getType());
+        humidity = airInput.getHumidity();
+        temperature = airInput.getTemperature();
+        oxygenLevel = airInput.getOxygenLevel();
     }
 
     public String getType() {
@@ -58,6 +62,22 @@ public abstract class Air extends Entity {
         return oxygenLevel;
     }
 
+    public double getCurrQuality() {
+        return currQuality;
+    }
+
+    public int getWeatherTimestamp() {
+        return weatherTimestamp;
+    }
+
+    public void setCurrQuality(double currQuality) {
+        this.currQuality = currQuality;
+    }
+
+    public void setWeatherTimestamp(int weatherTimestamp) {
+        this.weatherTimestamp = Math.max(0, weatherTimestamp);
+    }
+
     public double normalizeScore(double score) {
         return Math.max(0, Math.min(score, 100));
     }
@@ -66,40 +86,35 @@ public abstract class Air extends Entity {
         return (Math.round(score * 100) / 100d);
     }
 
-    public static Air createAir(String name, double mass, String type, double humidity,
-                         double temperature, double oxygenLevel,
-                         double specificVariable) {
-        return switch (type) {
-            case "TropicalAir" -> new TropicalAir(name, mass, type, humidity, temperature,
-                    oxygenLevel, specificVariable);
-            case "PolarAir" -> new PolarAir(name, mass, type, humidity, temperature,
-                    oxygenLevel, specificVariable);
-            case "TemperateAir" -> new TemperateAir(name, mass, type, humidity, temperature,
-                    oxygenLevel, specificVariable);
-            case "DesertAir" -> new DesertAir(name, mass, type, humidity, temperature,
-                    oxygenLevel, specificVariable);
-            case "MountainAir" -> new MountainAir(name, mass, type, humidity, temperature,
-                    oxygenLevel, specificVariable);
+    public static Air createAir(AirInput airInput) {
+        return switch (airInput.getType()) {
+            case "TropicalAir" -> new TropicalAir(airInput);
+            case "PolarAir" -> new PolarAir(airInput);
+            case "TemperateAir" -> new TemperateAir(airInput);
+            case "DesertAir" -> new DesertAir(airInput);
+            case "MountainAir" -> new MountainAir(airInput);
             default -> throw new IllegalArgumentException();
         };
     }
 
-    public abstract double getAirQuality();
+    public abstract double calculateAirQuality();
 
     public double getToxicity() {
-        double toxicityAQ = 100 * (1 - this.getAirQuality() / type.getMaxScore());
+        double toxicityAQ = 100 * (1 - this.calculateAirQuality() / type.getMaxScore());
         return (Math.round(toxicityAQ * 100) / 100d);
     }
 
     public ObjectNode printAir(ObjectMapper mapper) {
         ObjectNode airNode = this.printEntity(mapper);
-        airNode.put("humidity", this.getHumidity());
-        airNode.put("temperature", this.getTemperature());
-        airNode.put("oxygenLevel", this.getOxygenLevel());
-        airNode.put("airQuality", this.getAirQuality());
+        airNode.put("humidity", getHumidity());
+        airNode.put("temperature", getTemperature());
+        airNode.put("oxygenLevel", getOxygenLevel());
+        airNode.put("airQuality", currQuality);
         this.addSpecificTrait(airNode);
         return airNode;
     }
 
     public abstract void addSpecificTrait(ObjectNode objNode);
+
+    public abstract double checkWeather(CommandInput cmdInput);
 }

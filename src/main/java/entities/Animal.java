@@ -1,5 +1,7 @@
 package entities;
 
+import fileio.AnimalInput;
+
 public class Animal extends Entity {
     private final AnimalType type;
 
@@ -21,9 +23,9 @@ public class Animal extends Entity {
         }
     }
 
-    public Animal(String name, double mass, String type) {
-        super(name, mass);
-        this.type = AnimalType.valueOf(type);
+    public Animal(AnimalInput animalInput) {
+        super(animalInput.getName(), animalInput.getMass());
+        type = AnimalType.valueOf(animalInput.getType());
     }
 
     public String getType() {
@@ -31,6 +33,6 @@ public class Animal extends Entity {
     }
 
     public double getAttack() {
-        return (100 - type.getAttackProbability()) / 10;
+        return (100 - type.getAttackProbability()) / 10d;
     }
 }

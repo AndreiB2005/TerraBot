@@ -4,35 +4,30 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
+import mission.TerraBot;
+import mission.World;
 import worldMap.MapMatrix;
 import worldMap.MapCell;
 
 public class PrintMap implements Command {
-    private final String commandName = "printMap";
-    private final int timestamp;
     private final ObjectMapper mapper;
     private final MapMatrix mapMatrix;
+    private final TerraBot robot;
     private final boolean simulationStarted;
 
-    public PrintMap(int timestamp, ObjectMapper mapper, MapMatrix mapMatrix,
-                    boolean simulationStarted) {
-        this.timestamp = timestamp;
-        this.mapper = mapper;
-        this.mapMatrix = mapMatrix;
-        this.simulationStarted = simulationStarted;
+    public PrintMap(World world) {
+        mapper = world.getMapper();
+        mapMatrix = world.getWorldMap();
+        robot = world.getMyRobot();
+        simulationStarted = world.getSimulationStarted();
     }
 
-    public String getCommandName() {
-        return commandName;
-    }
-
-    public int getTimestamp() {
-        return timestamp;
-    }
-
-    public void execute(ObjectNode objNode) throws NotStartedException {
+    public void execute(ObjectNode objNode) throws
+            NotStartedException, StillChargingException {
         if (!simulationStarted)
             throw new NotStartedException();
+        if (robot.getRechargeTime() > 0)
+            throw new StillChargingException();
         ArrayNode cellArray = mapper.createArrayNode();
         for (int y = 0; y < mapMatrix.getRows(); y++) {
             for (int x = 0; x < mapMatrix.getCols(); x++) {
@@ -68,9 +63,9 @@ public class PrintMap implements Command {
     }
 
     private String printAirQuality(MapCell cell) {
-        if (cell.getAir().getAirQuality() > 70)
+        if (cell.getAir().calculateAirQuality() > 70)
             return "good";
-        if (cell.getAir().getAirQuality() > 40)
+        if (cell.getAir().calculateAirQuality() > 40)
             return "moderate";
         return "poor";
     }

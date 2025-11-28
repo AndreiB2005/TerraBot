@@ -2,16 +2,16 @@ package entities.soilTypes;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import fileio.SoilInput;
+
 import entities.Soil;
 
 public class TundraSoil extends Soil {
     private final double permafrostDepth;
 
-    public TundraSoil(String name, double mass, String type, double nitrogen,
-                      double waterRetention, double soilpH, double organicMatter,
-                      double permafrostDepth) {
-        super(name, mass, type, nitrogen, waterRetention, soilpH, organicMatter);
-        this.permafrostDepth = permafrostDepth;
+    public TundraSoil(SoilInput soilInput) {
+        super(soilInput);
+        permafrostDepth = soilInput.getPermafrostDepth();
     }
 
     public double getSoilQuality() {
@@ -22,7 +22,7 @@ public class TundraSoil extends Soil {
     }
 
     public double getTrap() {
-        return (50 - permafrostDepth) * 50 / 100;
+        return (50 - permafrostDepth) / 50d * 100d;
     }
 
     public double getPermafrostDepth() {

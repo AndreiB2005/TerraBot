@@ -1,13 +1,13 @@
 package mission.commandCenter;
 
 public class NotStartedException extends Exception {
-    private final String errorMessage;
+    private final String message;
 
     public NotStartedException() {
-        this.errorMessage = "ERROR: Simulation not started. Cannot perform action";
+        message = "ERROR: Simulation not started. Cannot perform action";
     }
 
-    public String getErrorMessage() {
-        return errorMessage;
+    public String getMessage() {
+        return message;
     }
 }
