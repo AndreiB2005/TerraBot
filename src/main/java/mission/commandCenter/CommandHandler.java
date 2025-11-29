@@ -12,6 +12,10 @@ import mission.World;
 import mission.TerraBot;
 import worldMap.MapMatrix;
 import worldMap.MapCell;
+import entities.Plant;
+import entities.Animal;
+import entities.Water;
+import entities.Soil;
 import entities.Air;
 
 public class CommandHandler {
@@ -35,6 +39,12 @@ public class CommandHandler {
             if (myWorld.getSimulationStarted()) {
                 int rechargeTime = myWorld.getMyRobot().getRechargeTime();
                 myWorld.getMyRobot().setRechargeTime(rechargeTime - timePassed);
+                for (int idx = 0; idx < timePassed; idx++) {
+                    updateWater();
+                    evolvePlant();
+                    feedAnimal();
+                    finishIteration();
+                }
                 checkChangeWeather(timePassed);
             }
             objNode.put("command", cmdInput.getCommand());
@@ -65,6 +75,7 @@ public class CommandHandler {
             case "getEnergyStatus" -> new GetEnergyStatus(myWorld);
             case "rechargeBattery" -> new RechargeBattery(myWorld, cmdInput.getTimeToCharge());
             case "changeWeatherConditions" -> new ChangeWeatherConditions(myWorld, cmdInput);
+            case "scanObject" -> new ScanObject(myWorld, cmdInput);
             default -> throw new IllegalArgumentException();
         };
     }
@@ -77,6 +88,89 @@ public class CommandHandler {
                 currAir.setWeatherTimestamp(weatherTime - time);
                 if (currAir.getWeatherTimestamp() == 0)
                     currAir.setCurrQuality(currAir.calculateAirQuality());
+            }
+        }
+    }
+
+    private void evolvePlant() {
+        for (int y = 0; y < myWorld.getWorldMap().getRows(); y++) {
+            for (int x = 0; x < myWorld.getWorldMap().getCols(); x++) {
+                MapCell currCell = myWorld.getWorldMap().getCell(x, y);
+                Plant currPlant = currCell.getPlant();
+                Soil currSoil = currCell.getSoil();
+                Air currAir = currCell.getAir();
+                Water currWater = currCell.getWater();
+                if (currPlant == null || !currPlant.isScanned())
+                    continue;
+                if (currSoil != null)
+                    currPlant.growPlant();
+                if (currWater != null && currWater.isScanned())
+                    currPlant.growPlant();
+                if (currPlant.isDead()) {
+                    currCell.setPlant(null);
+                    continue;
+                }
+                if (currAir != null)
+                    currAir.setOxygenLevel(currAir.getOxygenLevel() + currPlant.generateOxygen());
+            }
+        }
+    }
+
+    private void updateWater() {
+        for (int y = 0; y < myWorld.getWorldMap().getRows(); y++) {
+            for (int x = 0; x < myWorld.getWorldMap().getCols(); x++) {
+                MapCell currCell = myWorld.getWorldMap().getCell(x, y);
+                Soil currSoil = currCell.getSoil();
+                Air currAir = currCell.getAir();
+                Water currWater = currCell.getWater();
+                if (currWater == null || !currWater.isScanned())
+                    continue;
+                if (currAir != null && currWater.getScanTimestamp() % 2 == 0)
+                    currAir.setHumidity(currAir.getHumidity() + 0.1);
+                if (currSoil != null && currWater.getScanTimestamp() % 2 == 0)
+                    currSoil.setWaterRetention(currSoil.getWaterRetention() + 0.1);
+                currWater.incScanTimestamp();
+            }
+        }
+    }
+
+    private void feedAnimal() {
+        for (int y = 0; y < myWorld.getWorldMap().getRows(); y++) {
+            for (int x = 0; x < myWorld.getWorldMap().getCols(); x++) {
+                MapCell currCell = myWorld.getWorldMap().getCell(x, y);
+                Animal currAnimal = currCell.getAnimal();
+                Soil currSoil = currCell.getSoil();
+                Air currAir = currCell.getAir();
+                if (currAnimal == null || !currAnimal.isScanned())
+                    continue;
+                if (currAnimal.getDoneIteration())
+                    continue;
+                if (currAir != null && currAir.isToxic())
+                    currAnimal.setSoilMatter(0d);
+                if (currSoil != null)
+                    currSoil.setOrganicMatter(currSoil.getOrganicMatter() +
+                            currAnimal.getSoilMatter());
+                MapCell nextCell = currAnimal.findNextCell(myWorld.getWorldMap(),
+                        x, y);
+                if (currAnimal.getScanTimestamp() % 2 == 0) {
+                    currAnimal.eatEntities(nextCell);
+                    nextCell.moveAnimal(currAnimal);
+                    currCell.setAnimal(null);
+                } else if (currCell.getWater() != null) {
+                    currAnimal.drinkWater(currCell);
+                }
+                currAnimal.incScanTimestamp();
+                currAnimal.setDoneIteration(true);
+            }
+        }
+    }
+
+    private void finishIteration() {
+        for (int y = 0; y < myWorld.getWorldMap().getRows(); y++) {
+            for (int x = 0; x < myWorld.getWorldMap().getCols(); x++) {
+                Animal currAnimal = myWorld.getWorldMap().getCell(x, y).getAnimal();
+                if (currAnimal != null)
+                    currAnimal.setDoneIteration(false);
             }
         }
     }

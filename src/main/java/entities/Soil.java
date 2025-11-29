@@ -55,6 +55,14 @@ public abstract class Soil extends Entity {
         return organicMatter;
     }
 
+    public void setWaterRetention(double waterRetention) {
+        this.waterRetention = waterRetention;
+    }
+
+    public void setOrganicMatter(double organicMatter) {
+        this.organicMatter = organicMatter;
+    }
+
     public double normalizeScore(double score) {
         return Math.max(0, Math.min(score, 100));
     }
@@ -80,10 +88,10 @@ public abstract class Soil extends Entity {
 
     public ObjectNode printSoil(ObjectMapper mapper) {
         ObjectNode soilNode = printEntity(mapper);
-        soilNode.put("nitrogen", getNitrogen());
-        soilNode.put("waterRetention", getWaterRetention());
-        soilNode.put("soilpH", getSoilpH());
-        soilNode.put("organicMatter", getOrganicMatter());
+        soilNode.put("nitrogen", nitrogen);
+        soilNode.put("waterRetention", Math.round(waterRetention * 100) / 100d);
+        soilNode.put("soilpH", soilpH);
+        soilNode.put("organicMatter", organicMatter);
         soilNode.put("soilQuality", getSoilQuality());
         addSpecificTrait(soilNode);
         return soilNode;

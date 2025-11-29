@@ -70,7 +70,7 @@ public class Plant extends Entity {
 
     public void growPlant() {
         growthLevel += 0.2;
-        if (growthLevel > 1d) {
+        if (growthLevel == 1d) {
             growthLevel -= 1d;
             age = age.nextLevel();
         }
@@ -82,5 +82,9 @@ public class Plant extends Entity {
 
     public boolean isDead() {
         return age == null;
+    }
+
+    public String getScanResult() {
+        return "The scanned object is a plant.";
     }
 }

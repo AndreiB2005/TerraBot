@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public abstract class Entity {
     private final String name;
     private double mass;
+    private boolean scanned = false;
 
     public Entity(String name, double mass) {
         this.name = name;
@@ -22,8 +23,16 @@ public abstract class Entity {
         return mass;
     }
 
+    public boolean isScanned() {
+        return scanned;
+    }
+
     public void setMass(double mass) {
         this.mass = mass;
+    }
+
+    public void setScanned(boolean scanned) {
+        this.scanned = scanned;
     }
 
     public ObjectNode printEntity(ObjectMapper mapper) {
@@ -32,5 +41,9 @@ public abstract class Entity {
         entityNode.put("name", this.getName());
         entityNode.put("mass", this.getMass());
         return entityNode;
+    }
+
+    public String getScanResult() {
+        return "The scanned object is an entity.";
     }
 }

@@ -70,6 +70,14 @@ public abstract class Air extends Entity {
         return weatherTimestamp;
     }
 
+    public void setHumidity(double humidity) {
+        this.humidity = humidity;
+    }
+
+    public void setOxygenLevel(double oxygenLevel) {
+        this.oxygenLevel = oxygenLevel;
+    }
+
     public void setCurrQuality(double currQuality) {
         this.currQuality = currQuality;
     }
@@ -101,14 +109,18 @@ public abstract class Air extends Entity {
 
     public double getToxicity() {
         double toxicityAQ = 100 * (1 - this.calculateAirQuality() / type.getMaxScore());
-        return (Math.round(toxicityAQ * 100) / 100d);
+        return Math.max(Math.round(toxicityAQ * 100) / 100d, 0);
+    }
+
+    public boolean isToxic() {
+        return getToxicity() > type.getMaxScore() * 0.8;
     }
 
     public ObjectNode printAir(ObjectMapper mapper) {
         ObjectNode airNode = this.printEntity(mapper);
-        airNode.put("humidity", getHumidity());
-        airNode.put("temperature", getTemperature());
-        airNode.put("oxygenLevel", getOxygenLevel());
+        airNode.put("humidity", Math.round(humidity * 100) / 100d);
+        airNode.put("temperature", temperature);
+        airNode.put("oxygenLevel", Math.round(oxygenLevel * 100) / 100d);
         airNode.put("airQuality", currQuality);
         this.addSpecificTrait(airNode);
         return airNode;

@@ -10,6 +10,7 @@ public class Water extends Entity {
     private final double turbidity;
     private final double contaminantIndex;
     private final boolean isFrozen;
+    private int scanTimestamp = 1;
 
     public Water(WaterInput waterInput) {
         super(waterInput.getName(), waterInput.getMass());
@@ -26,6 +27,14 @@ public class Water extends Entity {
         return type;
     }
 
+    public int getScanTimestamp() {
+        return scanTimestamp;
+    }
+
+    public void incScanTimestamp() {
+        scanTimestamp++;
+    }
+
     public double getWaterQuality() {
         double purityScore = purity / 100;
         double phScore = 1 - (Math.abs(pH - 7.5) / 7.5);
@@ -39,5 +48,9 @@ public class Water extends Entity {
                 0.1 * turbidityScore +
                 0.15 * contaminantScore +
                 0.2 * frozenScore) * 100;
+    }
+
+    public String getScanResult() {
+        return "The scanned object is water.";
     }
 }

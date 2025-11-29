@@ -40,15 +40,15 @@ public class MapCell {
     }
 
     public void setPlant(PlantInput plant) {
-        this.plant = new Plant(plant);
+        this.plant = (plant != null) ? new Plant(plant) : null;
     }
 
     public void setAnimal(AnimalInput animal) {
-        this.animal = new Animal(animal);
+        this.animal = (animal != null) ? new Animal(animal) : null;
     }
 
     public void setWater(WaterInput water) {
-        this.water = new Water(water);
+        this.water = (water != null) ? new Water(water) : null;
     }
 
     public void setSoil(SoilInput soil) {
@@ -57,5 +57,9 @@ public class MapCell {
 
     public void setAir(AirInput air) {
         this.air = Air.createAir(air);
+    }
+
+    public void moveAnimal(Animal animal) {
+        this.animal = animal;
     }
 }
