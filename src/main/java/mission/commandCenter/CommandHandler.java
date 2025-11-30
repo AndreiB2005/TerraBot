@@ -76,6 +76,9 @@ public class CommandHandler {
             case "rechargeBattery" -> new RechargeBattery(myWorld, cmdInput.getTimeToCharge());
             case "changeWeatherConditions" -> new ChangeWeatherConditions(myWorld, cmdInput);
             case "scanObject" -> new ScanObject(myWorld, cmdInput);
+            case "learnFact" -> new LearnFact(myWorld, cmdInput);
+            case "printKnowledgeBase" -> new PrintKnowledgeBase(myWorld);
+            case "improveEnvironment" -> ImproveEnvironment.generateImprovement(myWorld, cmdInput);
             default -> throw new IllegalArgumentException();
         };
     }

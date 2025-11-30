@@ -39,25 +39,32 @@ public class ScanObject implements Command {
             throw new NotStartedException();
         if (myRobot.getRechargeTime() > 0)
             throw new StillChargingException();
-        Entity cellEntity = null;
         String message;
+        try {
+            Entity cellEntity = getCellEntity();
+            myRobot.setBattery(myRobot.getBattery() - 7);
+            cellEntity.setScanned(true);
+            myRobot.getScanList().add(cellEntity);
+            message = cellEntity.getScanResult();
+        } catch (Exception e) {
+            message = e.getMessage();
+        }
+        objNode.put("message", message);
+    }
+
+    private Entity getCellEntity() throws
+            NotEnoughEnergyException, NotFoundException {
+        Entity cellEntity = null;
         if (!color.equals("none") && !smell.equals("none") && sound.equals("none"))
             cellEntity = mapCell.getPlant();
         if (color.equals("none") && smell.equals("none") && sound.equals("none"))
             cellEntity = mapCell.getWater();
         if (!color.equals("none") && !smell.equals("none") && !sound.equals("none"))
             cellEntity = mapCell.getAnimal();
-        try {
-            if (myRobot.getBattery() < 7)
-                throw new NotEnoughBatteryException();
-            if (cellEntity == null)
-                throw new NotFoundException();
-            myRobot.setBattery(myRobot.getBattery() - 7);
-            cellEntity.setScanned(true);
-            message = cellEntity.getScanResult();
-        } catch (Exception e) {
-            message = e.getMessage();
-        }
-        objNode.put("message", message);
+        if (myRobot.getBattery() < 7)
+            throw new NotEnoughEnergyException();
+        if (cellEntity == null)
+            throw new NotFoundException();
+        return cellEntity;
     }
 }

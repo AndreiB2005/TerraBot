@@ -57,6 +57,10 @@ public class Animal extends Entity {
         return doneIteration;
     }
 
+    public boolean eatsAnimals() {
+        return type.getEatsAnimal();
+    }
+
     public void setSoilMatter(double soilMatter) {
         this.soilMatter = soilMatter;
     }
@@ -117,6 +121,7 @@ public class Animal extends Entity {
     public MapCell findNextCell(MapMatrix mapWorld, int posX, int posY) {
         double bestWaterQuality = 0;
         Direction bestDirection = null;
+        Animal animal = mapWorld.getCell(posX, posY).getAnimal();
         for (Direction dir : Direction.values()) {
             int currX = posX + dir.getDirX();
             int currY = posY + dir.getDirY();
@@ -124,6 +129,8 @@ public class Animal extends Entity {
                 MapCell currCell = mapWorld.getCell(currX, currY);
                 Plant currPlant = currCell.getPlant();
                 Water currWater = currCell.getWater();
+                if (currCell.getAnimal() != null && !animal.eatsAnimals())
+                    continue;
                 if (currPlant != null && currWater != null &&
                         currPlant.isScanned() && currWater.isScanned()) {
                     if (bestWaterQuality < currWater.getWaterQuality()) {
@@ -144,6 +151,8 @@ public class Animal extends Entity {
                     MapCell currCell = mapWorld.getCell(currX, currY);
                     Water currWater = currCell.getWater();
                     if (currWater != null && currWater.isScanned()) {
+                        if (currCell.getAnimal() != null && !animal.eatsAnimals())
+                            continue;
                         if (waterQuality < currWater.getWaterQuality()) {
                             waterQuality = currWater.getWaterQuality();
                             bestDirection = dir;
@@ -154,6 +163,8 @@ public class Animal extends Entity {
                 }
             }
         }
+        if (bestDirection == null)
+            return mapWorld.getCell(posX, posY);
         int bestX = posX + bestDirection.getDirX();
         int bestY = posY + bestDirection.getDirY();
         return mapWorld.getCell(bestX, bestY);
