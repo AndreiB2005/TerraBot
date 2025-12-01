@@ -1,13 +1,14 @@
 package mission.commandCenter;
 
+/**
+ * Exception thrown when an action is attempted but the robot is still charging.
+ */
 public class StillChargingException extends Exception {
-    private final String message;
 
+    /**
+     * Constructs a new StillChargingException with a default message.
+     */
     public StillChargingException() {
-        message = "ERROR: Robot still charging. Cannot perform action";
-    }
-
-    public String getMessage() {
-        return message;
+        super("ERROR: Robot still charging. Cannot perform action");
     }
 }

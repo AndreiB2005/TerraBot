@@ -11,14 +11,36 @@ import entities.soilTypes.DesertSoil;
 import entities.soilTypes.GrasslandSoil;
 import entities.soilTypes.TundraSoil;
 
+/**
+ * Represents a soil entity with chemical and physical properties.
+ * Each soil has a type, nitrogen content, water retention capacity,
+ * pH value, and organic matter. Specific soil types extend this class
+ * to provide additional traits and behavior.
+ */
 public abstract class Soil extends Entity {
+
+    /** Magic number constants */
+    private static final double MAX_SCORE = 100d;
+    private static final double MULTIPLIER_TWO_DECIMALS = 100d;
+    private static final double DIVIDER_TWO_DECIMALS = 100d;
+
+    /** The type of soil (e.g., Forest, Swamp, Desert). */
     private final SoilType type;
+
+    /** Nitrogen content of the soil. */
     private final double nitrogen;
+
+    /** Water retention capacity of the soil. */
     private double waterRetention;
+
+    /** Soil pH value. */
     private final double soilpH;
+
+    /** Organic matter content of the soil. */
     private double organicMatter;
 
-    private enum SoilType{
+    /** Enum representing the available soil types. */
+    private enum SoilType {
         ForestSoil,
         SwampSoil,
         DesertSoil,
@@ -26,7 +48,12 @@ public abstract class Soil extends Entity {
         TundraSoil;
     }
 
-    public Soil(SoilInput soilInput) {
+    /**
+     * Constructs a soil entity based on the input data.
+     *
+     * @param soilInput the input data containing soil properties
+     */
+    public Soil(final SoilInput soilInput) {
         super(soilInput.getName(), soilInput.getMass());
         type = SoilType.valueOf(soilInput.getType());
         nitrogen = soilInput.getNitrogen();
@@ -35,43 +62,69 @@ public abstract class Soil extends Entity {
         organicMatter = soilInput.getOrganicMatter();
     }
 
+    /** @return the string name of this soil's type */
+    @Override
     public String getType() {
         return type.name();
     }
 
+    /** @return nitrogen content of the soil */
     public double getNitrogen() {
         return nitrogen;
     }
 
+    /** @return water retention capacity of the soil */
     public double getWaterRetention() {
         return waterRetention;
     }
 
+    /** @return pH value of the soil */
     public double getSoilpH() {
         return soilpH;
     }
 
+    /** @return organic matter content of the soil */
     public double getOrganicMatter() {
         return organicMatter;
     }
 
-    public void setWaterRetention(double waterRetention) {
+    /** Sets the water retention capacity of the soil. */
+    public void setWaterRetention(final double waterRetention) {
         this.waterRetention = waterRetention;
     }
 
-    public void setOrganicMatter(double organicMatter) {
+    /** Sets the organic matter content of the soil. */
+    public void setOrganicMatter(final double organicMatter) {
         this.organicMatter = organicMatter;
     }
 
-    public double normalizeScore(double score) {
-        return Math.max(0, Math.min(score, 100));
+    /**
+     * Normalizes a score to the range 0–100.
+     *
+     * @param score the value to normalize
+     * @return the normalized score
+     */
+    public double normalizeScore(final double score) {
+        return Math.max(0, Math.min(score, MAX_SCORE));
     }
 
-    public double roundScore(double score) {
-        return (Math.round(score * 100) / 100d);
+    /**
+     * Rounds a score to two decimal places.
+     *
+     * @param score the value to round
+     * @return the rounded score
+     */
+    public double roundScore(final double score) {
+        return (Math.round(score * MULTIPLIER_TWO_DECIMALS) / DIVIDER_TWO_DECIMALS);
     }
 
-    public static Soil createSoil(SoilInput soilInput) {
+    /**
+     * Factory method to create a specific soil type based on input.
+     *
+     * @param soilInput the input data defining the soil
+     * @return a concrete Soil instance
+     */
+    public static Soil createSoil(final SoilInput soilInput) {
         return switch (soilInput.getType()) {
             case "ForestSoil" -> new ForestSoil(soilInput);
             case "SwampSoil" -> new SwampSoil(soilInput);
@@ -82,14 +135,33 @@ public abstract class Soil extends Entity {
         };
     }
 
+    /**
+     * Returns the trap value of this soil, specific to soil type.
+     *
+     * @return trap value
+     */
     public abstract double getTrap();
 
+    /**
+     * Computes the soil quality score for this soil.
+     *
+     * @return soil quality value
+     */
     public abstract double getSoilQuality();
 
-    public ObjectNode printSoil(ObjectMapper mapper) {
+    /**
+     * Returns a JSON representation of the soil entity, including
+     * type, nitrogen, water retention, pH, organic matter, soil quality,
+     * and any soil-specific traits.
+     *
+     * @param mapper the ObjectMapper used to create JSON nodes
+     * @return ObjectNode representing this soil
+     */
+    public ObjectNode printSoil(final ObjectMapper mapper) {
         ObjectNode soilNode = printEntity(mapper);
         soilNode.put("nitrogen", nitrogen);
-        soilNode.put("waterRetention", Math.round(waterRetention * 100) / 100d);
+        soilNode.put("waterRetention",
+                Math.round(waterRetention * MULTIPLIER_TWO_DECIMALS) / DIVIDER_TWO_DECIMALS);
         soilNode.put("soilpH", soilpH);
         soilNode.put("organicMatter", organicMatter);
         soilNode.put("soilQuality", getSoilQuality());
@@ -97,5 +169,10 @@ public abstract class Soil extends Entity {
         return soilNode;
     }
 
+    /**
+     * Adds soil-type-specific traits to the JSON representation.
+     *
+     * @param objNode the JSON node to augment
+     */
     public abstract void addSpecificTrait(ObjectNode objNode);
 }

@@ -1,13 +1,14 @@
 package mission.commandCenter.improvements;
 
+/**
+ * Exception thrown when a fact/method is not yet saved in the database.
+ */
 public class NoMethodException extends Exception {
-    private final String message;
 
+    /**
+     * Constructs a new NoMethodException with a default message.
+     */
     public NoMethodException() {
-        message = "ERROR: Fact not yet saved. Cannot perform action";
-    }
-
-    public String getMessage() {
-        return message;
+        super("ERROR: Fact not yet saved. Cannot perform action");
     }
 }

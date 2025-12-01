@@ -1,13 +1,14 @@
 package mission.commandCenter;
 
+/**
+ * Exception thrown when a subject has not yet been saved in the database.
+ */
 public class NotSavedException extends Exception {
-    private final String message;
 
+    /**
+     * Constructs a new NotSavedException with a default message.
+     */
     public NotSavedException() {
-        message = "ERROR: Subject not yet saved. Cannot perform action";
-    }
-
-    public String getMessage() {
-        return message;
+        super("ERROR: Subject not yet saved. Cannot perform action");
     }
 }

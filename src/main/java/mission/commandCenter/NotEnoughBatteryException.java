@@ -1,13 +1,15 @@
 package mission.commandCenter;
 
+/**
+ * Exception thrown when the robot does not have enough battery
+ * to perform an action.
+ */
 public class NotEnoughBatteryException extends Exception {
-    private final String message;
 
+    /**
+     * Constructs a new NotEnoughBatteryException with a default message.
+     */
     public NotEnoughBatteryException() {
-        message = "ERROR: Not enough battery left. Cannot perform action";
-    }
-
-    public String getMessage() {
-        return message;
+        super("ERROR: Not enough battery left. Cannot perform action");
     }
 }

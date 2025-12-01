@@ -1,13 +1,14 @@
 package mission.commandCenter;
 
+/**
+ * Exception thrown when an action is attempted but the simulation has not started.
+ */
 public class NotStartedException extends Exception {
-    private final String message;
 
+    /**
+     * Constructs a new NotStartedException with a default message.
+     */
     public NotStartedException() {
-        message = "ERROR: Simulation not started. Cannot perform action";
-    }
-
-    public String getMessage() {
-        return message;
+        super("ERROR: Simulation not started. Cannot perform action");
     }
 }
